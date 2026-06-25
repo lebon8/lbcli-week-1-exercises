@@ -164,18 +164,18 @@ echo "Create a descriptor for your taproot address and derive the address to ens
 
 # STUDENT TASK: Create a new taproot address
 # WRITE YOUR SOLUTION BELOW:
-NEW_TAPROOT_ADDR=$(bitcoin-cli -regtest -rpcwallet="btrustwallet" getnewaddress "" bech32m)
+NEW_TAPROOT_ADDR=$(bitcoin-cli -regtest -rpcwallet=btrustwallet getnewaddress "" bech32m)
 check_cmd "New taproot address generation"
 NEW_TAPROOT_ADDR=$(trim "$NEW_TAPROOT_ADDR")
 
 # STUDENT TASK: Get the address info to extract the internal key
 # WRITE YOUR SOLUTION BELOW:
-ADDR_INFO=$(bitcoin-cli -regtest getaddressinfo "$NEW_TAPROOT_ADDR")
+ADDR_INFO=$(bitcoin-cli -regtest getaddressinfo $NEW_TAPROOT_ADDR)
 check_cmd "Getting address info"
 
 # STUDENT TASK: Extract the internal key (the x-only pubkey) from the descriptor
 # WRITE YOUR SOLUTION BELOW:
-INTERNAL_KEY=$(echo "$ADDR_INFO" | jq -r '.pubkey')
+INTERNAL_KEY=$(echo "$ADDR_INFO" | jq -r '.internal_key')
 check_cmd "Extracting key from descriptor"
 INTERNAL_KEY=$(trim "$INTERNAL_KEY")
 
@@ -196,7 +196,7 @@ echo "Taproot treasure map: $TAPROOT_DESCRIPTOR"
 # WRITE YOUR SOLUTION BELOW:
 DERIVED_ADDR_RAW=$(bitcoin-cli -regtest deriveaddresses "$TAPROOT_DESCRIPTOR")
 check_cmd "Address derivation"
-DERIVED_ADDR=$(echo "$DERIVED_ADDR_RAW" | tr -d '[]" \n\t')
+DERIVED_ADDR=$(echo "$DERIVED_ADDR_RAW" | jq -r '.[0]')
 echo "Derived quantum vault address: $DERIVED_ADDR"
 
 # Verify the addresses match
